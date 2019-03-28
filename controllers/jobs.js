@@ -1,5 +1,8 @@
 const Job = require("../models/job");
 
+/**
+ * Gets all Jobs
+ */
 exports.getJobs = (req, res, next) => {
     Job.findAll()
         .then(jobs => {
@@ -21,6 +24,9 @@ exports.getJobs = (req, res, next) => {
 //         .catch(err => res.json({ success: false, message: "Job does not exists" }))
 // }
 
+/**
+ * Posts a Job
+ */
 exports.postJob = (req, res) => {
     const { title } = req.body;
     Job.create({
@@ -31,6 +37,9 @@ exports.postJob = (req, res) => {
     .catch(err => res.json({ message: "Failed", error: err }))
 }
 
+/**
+ * Deletes a Job
+ */
 exports.deleteJob = (req, res) => {
     const jobId = req.params.id;
     Job.findByPk(jobId)

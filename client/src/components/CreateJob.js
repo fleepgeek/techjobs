@@ -11,6 +11,7 @@ class CreateJob extends Component {
     }
 
     componentDidMount() {
+        // Sets the "jobCreated" state to false when component is mounted
         this.props.onAddJobInit();
     }
     
@@ -20,6 +21,9 @@ class CreateJob extends Component {
         const formData = {
             title: this.state.title
         }
+        // Sets the "jobCreated" state to true on success,
+        // this to redirect to home because we're using
+        // the <Redirect /> component.
         this.props.onAddJob(formData);
     }
 
