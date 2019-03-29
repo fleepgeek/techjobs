@@ -6,12 +6,12 @@
 */
 
 const express = require("express");
-const jobsController = require("../../controllers/jobs");
+const jobController = require("../../controllers/job");
 const router = express.Router();
 
 // router.get("/:id", jobsController.getJobById);
-router.get("/", jobsController.getJobs);
-router.post("/", jobsController.postJob);
-router.delete("/:id", jobsController.deleteJob);
+router.get("/", jobController.getJobs);
+router.post("/", jobController.postJob);
+router.delete("/:id", jobController.deleteJob);
 
 module.exports = router;
