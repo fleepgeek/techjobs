@@ -7,11 +7,13 @@
 
 const express = require("express");
 const jobController = require("../../controllers/job");
+const authenticate = require("../../middlewares/auth");
+
 const router = express.Router();
 
 // router.get("/:id", jobsController.getJobById);
 router.get("/", jobController.getJobs);
-router.post("/", jobController.postJob);
-router.delete("/:id", jobController.deleteJob);
+router.post("/", authenticate, jobController.postJob);
+router.delete("/:id", authenticate, jobController.deleteJob);
 
 module.exports = router;
