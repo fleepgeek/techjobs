@@ -1,25 +1,45 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { Route, Switch } from "react-router-dom";
+import { connect } from "react-redux";
 import { Container } from "reactstrap";
-import { Route } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 
 import AppNavbar from "./components/AppNavbar";
-import JobList from "./components/JobList";
-import CreateJob from "./components/CreateJob";
+import Logout from "./components/Logout";
+import { JobList, CreateJob, Auth } from "./pages";
 
 class App extends Component {
   render() {
-    return (
-      <div className="App">
-        <AppNavbar />
-        <Container>
+    let routes = (
+      <Switch>
+        <Route path="/auth" component={Auth} />
+        <Route path="/" exact component={JobList} />
+        <Route render={() => <h2>Not Found</h2>} />
+      </Switch>
+    );
+    if (this.props.isAuth) {
+      routes = (
+        <Switch>
+          <Route path="/logout" component={Logout} />
+          <Route path="/auth" component={Auth} />
           <Route path="/add-job" component={CreateJob} />
           <Route path="/" exact component={JobList} />
-        </Container>
+          <Route render={() => <h2>Not Found</h2>} />
+        </Switch>
+      );
+    }
+    return (
+      <div className="App">
+        <AppNavbar isAuth={this.props.isAuth} />
+        <Container>{routes}</Container>
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  isAuth: state.auth.token !== null
+});
+
+export default connect(mapStateToProps)(App);
