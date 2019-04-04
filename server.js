@@ -7,6 +7,10 @@ const sequelize = require("./config/database");
 
 const jobRoutes = require("./routes/api/job");
 
+// Models
+const Job = require("./models/job");
+const User = require("./models/user");
+
 const app = express();
 
 // This middleware always runs for all request
@@ -26,13 +30,17 @@ app.use("/api/auth", require("./routes/api/auth"));
 // does not exists there, set it to 5000
 const PORT = process.env.PORT || 5000;
 
+User.hasMany(Job, { foreignKey: "userId" });
+Job.belongsTo(User, { as: "user", onDelete: "CASCADE" });
+
 // This activates the db connection and runs any
 // initial query required eg Model to db table creation
-// sequelize.sync({ force: true })
+// sequelize
+// 	.sync({ force: true })
 sequelize
-  .sync()
-  .then(result => {
-    // this creates a http server and listens for incoming requests
-    app.listen(PORT, () => console.log("Started on Port " + PORT));
-  })
-  .catch(err => console.log(err));
+	.sync()
+	.then(result => {
+		// this creates a http server and listens for incoming requests
+		app.listen(PORT, () => console.log("Started on Port " + PORT));
+	})
+	.catch(err => console.log(err));

@@ -11,7 +11,7 @@ const authenticate = require("../../middlewares/auth");
 
 const router = express.Router();
 
-// router.get("/:id", jobsController.getJobById);
+router.get("/:id", jobController.getJobById);
 router.get("/", jobController.getJobs);
 router.post("/", authenticate, jobController.postJob);
 router.delete("/:id", authenticate, jobController.deleteJob);

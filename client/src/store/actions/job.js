@@ -31,53 +31,67 @@ import * as types from "./types";
 // Do you still hate your life my friend?
 
 export const loading = () => {
-  return {
-    type: types.LOADING
-  };
+	return {
+		type: types.LOADING
+	};
 };
 
 export const getJobsSuccess = jobs => {
-  return {
-    type: types.GET_JOBS_SUCCESS,
-    jobs
-  };
+	return {
+		type: types.GET_JOBS_SUCCESS,
+		jobs
+	};
 };
 
 export const errorOccured = error => {
-  return {
-    type: types.ERROR_OCCURED,
-    error
-  };
+	return {
+		type: types.ERROR_OCCURED,
+		error
+	};
 };
 
 // This is possible because of the redux-thunk middleware
 export const getJobs = () => {
-  return dispatch => {
-    dispatch(loading());
-    axios
-      .get("/jobs")
-      .then(res => {
-        dispatch(getJobsSuccess(res.data));
-      })
-      .catch(err => dispatch(errorOccured(err)));
-  };
+	return dispatch => {
+		dispatch(loading());
+		axios
+			.get("/jobs")
+			.then(res => {
+				dispatch(getJobsSuccess(res.data));
+			})
+			.catch(err => dispatch(errorOccured(err)));
+	};
 };
 
 export const addJobInit = () => {
-  return {
-    type: types.ADD_JOB_INIT
-  };
+	return {
+		type: types.ADD_JOB_INIT
+	};
 };
 
 // This is possible because of the redux-thunk middleware
 export const addJob = jobData => {
-  return dispatch => {
-    dispatch(loading());
-    axios
-      .post("/jobs", jobData)
-      .then(res => {
-        dispatch({ type: types.ADD_JOB_SUCCESS });
-      })
-      .catch(err => dispatch(errorOccured(err.response.data)));
-  };
+	return (dispatch, getState) => {
+		dispatch(loading());
+		const token = getState().auth.token;
+
+		// Headers
+		const config = {
+			headers: {}
+		};
+
+		// If token, add to headers
+		if (token) {
+			config.headers["x-access-token"] = token;
+		}
+		axios
+			.post("/jobs", jobData, config)
+			.then(res => {
+				return dispatch({ type: types.ADD_JOB_SUCCESS });
+			})
+			.then(() => {
+				dispatch(addJobInit());
+			})
+			.catch(err => dispatch(errorOccured(err.response.data)));
+	};
 };
