@@ -30,6 +30,7 @@ app.use("/api/auth", require("./routes/api/auth"));
 // does not exists there, set it to 5000
 const PORT = process.env.PORT || 5000;
 
+// Associations for our models
 User.hasMany(Job, { foreignKey: "userId" });
 Job.belongsTo(User, { as: "user", onDelete: "CASCADE" });
 

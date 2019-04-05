@@ -7,7 +7,7 @@ import "./App.css";
 
 import AppNavbar from "./components/AppNavbar";
 import Logout from "./components/Logout";
-import { JobList, CreateJob, Auth } from "./pages";
+import { Home, CreateJob, Jobs, JobDetail, Auth } from "./pages";
 
 import { authAutoLogin } from "./store/actions/auth";
 
@@ -19,18 +19,22 @@ class App extends Component {
 	render() {
 		let routes = (
 			<Switch>
+				<Route path="/jobs/:id" component={JobDetail} />
+				<Route path="/jobs" component={Jobs} />
 				<Route path="/auth" component={Auth} />
-				<Route path="/" exact component={JobList} />
+				<Route path="/" exact component={Home} />
 				<Route render={() => <h2>Not Found</h2>} />
 			</Switch>
 		);
 		if (this.props.isAuth) {
 			routes = (
 				<Switch>
+					<Route path="/jobs/:id" component={JobDetail} />
+					<Route path="/jobs" component={Jobs} />
 					<Route path="/logout" component={Logout} />
 					<Route path="/auth" component={Auth} />
 					<Route path="/add-job" component={CreateJob} />
-					<Route path="/" exact component={JobList} />
+					<Route path="/" exact component={Home} />
 					<Route render={() => <h2>Not Found</h2>} />
 				</Switch>
 			);
@@ -38,7 +42,7 @@ class App extends Component {
 		return (
 			<div className="App">
 				<AppNavbar isAuth={this.props.isAuth} />
-				<Container>{routes}</Container>
+				{routes}
 			</div>
 		);
 	}

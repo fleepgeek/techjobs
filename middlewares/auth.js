@@ -10,6 +10,7 @@ const authenticate = (req, res, next) => {
 			if (err) {
 				return res.status(401).json({ msg: "Invalid Token", error: err });
 			}
+			console.log(decoded);
 			req.userId = decoded.id;
 			next();
 		});

@@ -1,10 +1,11 @@
 import * as types from "../actions/types";
 
 const initialState = {
-  jobs: [],
-  isLoading: false,
-  jobCreated: false,
-  error: null
+	jobs: [],
+	job: null,
+	isLoading: false,
+	jobCreated: false,
+	error: null
 };
 
 /*
@@ -22,40 +23,46 @@ install an immutable library to make this easier.
 */
 
 const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case types.GET_JOBS_SUCCESS:
-      return {
-        ...state,
-        jobs: action.jobs,
-        isLoading: false
-      };
-    case types.ADD_JOB_INIT:
-      return {
-        ...state,
-        jobCreated: false,
-        error: null
-      };
-    case types.ADD_JOB_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        jobCreated: true,
-        error: null
-      };
-    case types.LOADING:
-      return {
-        ...state,
-        isLoading: true
-      };
-    case types.ERROR_OCCURED:
-      return {
-        ...state,
-        isLoading: false,
-        error: action.error
-      };
-    default:
-      return state;
-  }
+	switch (action.type) {
+		case types.GET_JOBS_SUCCESS:
+			return {
+				...state,
+				jobs: action.jobs,
+				isLoading: false
+			};
+		case types.GET_SINGLE_JOB_SUCCESS:
+			return {
+				...state,
+				job: action.job,
+				isLoading: false
+			};
+		case types.ADD_JOB_INIT:
+			return {
+				...state,
+				jobCreated: false,
+				error: null
+			};
+		case types.ADD_JOB_SUCCESS:
+			return {
+				...state,
+				isLoading: false,
+				jobCreated: true,
+				error: null
+			};
+		case types.LOADING:
+			return {
+				...state,
+				isLoading: true
+			};
+		case types.ERROR_OCCURED:
+			return {
+				...state,
+				isLoading: false,
+				error: action.error
+			};
+		default:
+			return state;
+	}
 };
 
 export default reducer;

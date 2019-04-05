@@ -28,13 +28,17 @@ exports.postAddUser = (req, res, next) => {
 						password: hashedPassword
 					})
 						.then(user => {
+							const exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1hr
 							jwt.sign(
-								{ id: user.id },
+								{ id: user.id, exp },
 								process.env.AUTH_SECRET_KEY,
-								{ expiresIn: "1h" },
+								{ expiresIn: exp },
 								(err, token) => {
+									console.log("Token: ", token);
+
 									res.json({
 										token,
+										expirationDate: exp,
 										user: {
 											id: user.id,
 											name: user.name,

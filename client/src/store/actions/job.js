@@ -63,6 +63,18 @@ export const getJobs = () => {
 	};
 };
 
+export const getSingleJob = jobId => {
+	return dispatch => {
+		dispatch(loading());
+		axios
+			.get(`/jobs/${jobId}`)
+			.then(res => {
+				dispatch({ type: types.GET_SINGLE_JOB_SUCCESS, job: res.data });
+			})
+			.catch(err => dispatch(errorOccured(err)));
+	};
+};
+
 export const addJobInit = () => {
 	return {
 		type: types.ADD_JOB_INIT

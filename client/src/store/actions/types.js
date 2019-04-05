@@ -12,6 +12,7 @@
 //JOB
 export const GET_JOBS = "GET JOBS";
 export const GET_JOBS_SUCCESS = "GET JOBS SUCCESS";
+export const GET_SINGLE_JOB_SUCCESS = "GET SINGLE JOB SUCCESS";
 export const ADD_JOB_INIT = "ADD JOB INIT";
 export const ADD_JOB = "ADD JOB";
 export const ADD_JOB_SUCCESS = "ADD JOB SUCCESS";

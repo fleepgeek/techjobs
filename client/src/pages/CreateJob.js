@@ -2,13 +2,16 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import {
+	Container,
 	Button,
 	Form,
 	FormGroup,
 	Label,
 	Input,
 	Spinner,
-	Alert
+	Alert,
+	Row,
+	Col
 } from "reactstrap";
 
 import { addJob, addJobInit } from "../store/actions/job";
@@ -42,29 +45,33 @@ class CreateJob extends Component {
 
 	render() {
 		return (
-			<div>
-				{this.props.jobCreated && <Redirect to="/" />}
-				<Form onSubmit={this.save}>
-					{this.props.error && (
-						<Alert color="danger">{this.props.error.msg}</Alert>
-					)}
-					<FormGroup>
-						<Label for="title">Title</Label>
-						<Input
-							type="text"
-							name="title"
-							id="title"
-							placeholder="Job Title"
-							onChange={this.onChanged}
-						/>
-					</FormGroup>
-					{this.props.isLoading ? (
-						<Spinner color="danger" />
-					) : (
-						<Button color="danger">Add</Button>
-					)}
-				</Form>
-			</div>
+			<Container>
+				<Row>
+					<Col md={{ size: 6, offset: 3 }}>
+						{this.props.jobCreated && <Redirect to="/" />}
+						<Form onSubmit={this.save}>
+							{this.props.error && (
+								<Alert color="danger">{this.props.error.msg}</Alert>
+							)}
+							<FormGroup>
+								<Label for="title">Title</Label>
+								<Input
+									type="text"
+									name="title"
+									id="title"
+									placeholder="Job Title"
+									onChange={this.onChanged}
+								/>
+							</FormGroup>
+							{this.props.isLoading ? (
+								<Spinner color="danger" />
+							) : (
+								<Button color="danger">Add</Button>
+							)}
+						</Form>
+					</Col>
+				</Row>
+			</Container>
 		);
 	}
 }
