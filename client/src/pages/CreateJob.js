@@ -17,11 +17,6 @@ import {
 import { addJob, addJobInit } from "../store/actions/job";
 
 class CreateJob extends Component {
-	// constructor(props) {
-	// 	super(props);
-	// 	// Sets the "jobCreated" state to false when component is mounted
-	// 	this.props.onAddJobInit();
-	// }
 	state = {
 		title: ""
 	};

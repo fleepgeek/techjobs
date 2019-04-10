@@ -9,10 +9,11 @@ const authenticate = (req, res, next) => {
 		jwt.verify(token, process.env.AUTH_SECRET_KEY, function(err, decoded) {
 			if (err) {
 				return res.status(401).json({ msg: "Invalid Token", error: err });
+			} else {
+				console.log(decoded);
+				req.userId = decoded.userId;
+				next();
 			}
-			console.log(decoded);
-			req.userId = decoded.id;
-			next();
 		});
 	}
 };

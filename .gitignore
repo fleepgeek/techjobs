@@ -10,6 +10,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# exclude everything inside the uploads folder
+uploads/*
+
 # Runtime data
 pids
 *.pid

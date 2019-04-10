@@ -5,6 +5,10 @@ const User = require("../models/user");
 
 exports.postAddUser = (req, res, next) => {
 	const { name, email, password } = req.body;
+	let imageUrl = null;
+	if (req.file) {
+		imageUrl = req.file.path;
+	}
 	if (!name || !email || !password) {
 		res.status(400).json({ msg: "All Field are required" });
 	} else {
@@ -25,20 +29,18 @@ exports.postAddUser = (req, res, next) => {
 					User.create({
 						name,
 						email,
-						password: hashedPassword
+						password: hashedPassword,
+						imageUrl
 					})
 						.then(user => {
-							const exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1hr
+							// const exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1hr
 							jwt.sign(
-								{ id: user.id, exp },
+								{ userId: user.id },
 								process.env.AUTH_SECRET_KEY,
-								{ expiresIn: exp },
+								{ expiresIn: "1h" },
 								(err, token) => {
-									console.log("Token: ", token);
-
 									res.json({
 										token,
-										expirationDate: exp,
 										user: {
 											id: user.id,
 											name: user.name,

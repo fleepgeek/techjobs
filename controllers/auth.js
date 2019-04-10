@@ -23,7 +23,7 @@ exports.postLogin = (req, res, next) => {
 						}
 						const exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1hr
 						jwt.sign(
-							{ id: user.id },
+							{ userId: user.id },
 							process.env.AUTH_SECRET_KEY,
 							{ expiresIn: "1h" },
 							(err, token) => {
@@ -46,4 +46,19 @@ exports.postLogin = (req, res, next) => {
 			})
 			.catch(err => next(err));
 	}
+};
+
+exports.getCurrentUser = (req, res, next) => {
+	const userId = req.userId;
+	User.findByPk(userId, {
+		attributes: { exclude: ["password", "updatedAt"] }
+	})
+		.then(user => {
+			res.json(user);
+		})
+		.catch(error =>
+			res
+				.status(500)
+				.json({ msg: "Something went wrong while fetching the user", error })
+		);
 };

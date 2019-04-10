@@ -1,19 +1,21 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
-import { Container } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 import AppNavbar from "./components/AppNavbar";
 import Logout from "./components/Logout";
-import { Home, CreateJob, Jobs, JobDetail, Auth } from "./pages";
+import { Home, CreateJob, Jobs, JobDetail, Auth, Dashboard } from "./pages";
 
-import { authAutoLogin } from "./store/actions/auth";
+import { authAutoLogin, loadAuthUser } from "./store/actions/auth";
 
 class App extends Component {
 	componentDidMount = () => {
 		this.props.onAutoLogin();
+		if (this.props.isAuth) {
+			this.props.onLoadAuthUser();
+		}
 	};
 
 	render() {
@@ -31,6 +33,7 @@ class App extends Component {
 				<Switch>
 					<Route path="/jobs/:id" component={JobDetail} />
 					<Route path="/jobs" component={Jobs} />
+					<Route path="/dashboard" component={Dashboard} />
 					<Route path="/logout" component={Logout} />
 					<Route path="/auth" component={Auth} />
 					<Route path="/add-job" component={CreateJob} />
@@ -41,7 +44,7 @@ class App extends Component {
 		}
 		return (
 			<div className="App">
-				<AppNavbar isAuth={this.props.isAuth} />
+				<AppNavbar isAuth={this.props.isAuth} user={this.props.user} />
 				{routes}
 			</div>
 		);
@@ -49,11 +52,13 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-	isAuth: state.auth.token !== null
+	isAuth: state.auth.token !== null,
+	user: state.auth.user
 });
 
 const mapDispatchToProps = dispatch => ({
-	onAutoLogin: () => dispatch(authAutoLogin())
+	onAutoLogin: () => dispatch(authAutoLogin()),
+	onLoadAuthUser: () => dispatch(loadAuthUser())
 });
 
 export default connect(

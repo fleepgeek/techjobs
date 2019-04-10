@@ -16,9 +16,13 @@ User.init(
 		password: {
 			type: Sequelize.STRING,
 			allowNull: false
+		},
+		imageUrl: {
+			type: Sequelize.STRING,
+			allowNull: true
 		}
 	},
-	{ underscored: true, sequelize }
+	{ sequelize }
 );
 
 module.exports = User;

@@ -5,7 +5,7 @@ import { Spinner, Container } from "reactstrap";
 import JobList from "../components/JobList";
 import { getJobs } from "../store/actions/job";
 
-export class Jobs extends Component {
+class Jobs extends Component {
 	componentDidMount() {
 		this.props.onGetJobs();
 	}

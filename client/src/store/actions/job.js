@@ -1,7 +1,7 @@
 // import axios from "axios";
 import axios from "../../utils/axios-base";
 // import { GET_JOBS, ADD_JOB, LOADING } from "./types"; // Another way to import them
-import * as types from "./types";
+import * as types from "./actionTypes";
 
 // Actions - These are JS objects that are sent to the reducer with some information.
 // These object must have the 'type' property which indicates the type of action.
@@ -52,14 +52,20 @@ export const errorOccured = error => {
 
 // This is possible because of the redux-thunk middleware
 export const getJobs = () => {
+	// Headers
+	const config = {
+		headers: {
+			"Content-Type": "application/json"
+		}
+	};
 	return dispatch => {
 		dispatch(loading());
 		axios
-			.get("/jobs")
+			.get("/jobs", config)
 			.then(res => {
 				dispatch(getJobsSuccess(res.data));
 			})
-			.catch(err => dispatch(errorOccured(err)));
+			.catch(err => dispatch(errorOccured(err.message)));
 	};
 };
 
@@ -89,7 +95,9 @@ export const addJob = jobData => {
 
 		// Headers
 		const config = {
-			headers: {}
+			headers: {
+				"Content-Type": "application/json"
+			}
 		};
 
 		// If token, add to headers
