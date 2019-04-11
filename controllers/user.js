@@ -3,9 +3,16 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
+/**
+ * Creates a new User
+ */
 exports.postAddUser = (req, res, next) => {
 	const { name, email, password } = req.body;
 	let imageUrl = null;
+	// req.file is availble because of multer.
+	// remember req.body was available because of bodyParser
+	// multer gives you access to files and data submitted from forms with
+	// enctype="multipart/form-data"
 	if (req.file) {
 		imageUrl = req.file.path;
 	}
@@ -13,6 +20,7 @@ exports.postAddUser = (req, res, next) => {
 		res.status(400).json({ msg: "All Field are required" });
 	} else {
 		let hashedPassword;
+		// Checks to see if the user already exists via the email field
 		User.findOne({
 			where: { email }
 		})
@@ -33,7 +41,6 @@ exports.postAddUser = (req, res, next) => {
 						imageUrl
 					})
 						.then(user => {
-							// const exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1hr
 							jwt.sign(
 								{ userId: user.id },
 								process.env.AUTH_SECRET_KEY,

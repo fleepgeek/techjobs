@@ -18,7 +18,7 @@ class Home extends Component {
 			<div style={{ marginTop: "-3rem" }}>
 				<Jumbotron fluid>
 					<Container>
-						<h1 className="display-3">Tech Careers</h1>
+						<h1 className="display-3">Tech Explorers</h1>
 						<p className="lead">
 							Get access to the latest tech jobs with just a click of a button.
 						</p>

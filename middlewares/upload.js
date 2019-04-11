@@ -1,5 +1,6 @@
 const multer = require("multer");
 
+// Setup for the multer middleware
 const storage = multer.diskStorage({
 	destination: function(req, file, cb) {
 		cb(null, "uploads/");
@@ -9,6 +10,9 @@ const storage = multer.diskStorage({
 	}
 });
 
+// Returns true if the file you're trying to upload
+// passes the conditions else the upload fails by
+// returning false
 function fileFilter(req, file, cb) {
 	if (
 		file.mimetype === "image/png" ||
@@ -21,6 +25,7 @@ function fileFilter(req, file, cb) {
 	}
 }
 
+// Creates a new multer instance
 const upload = multer({ storage, fileFilter });
 
 module.exports = upload;

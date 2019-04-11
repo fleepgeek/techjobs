@@ -15,10 +15,6 @@ exports.getJobs = (req, res, next) => {
 		]
 	})
 		.then(jobs => {
-			// jobs.map(job => {
-			// 	job.getUser(u => (job.userId = u + "sd"));
-			// 	// job.userId = u;
-			// });
 			res.json(jobs);
 		})
 		.catch(err => res.json({ success: false }));
@@ -35,24 +31,6 @@ exports.getJobById = (req, res) => {
 				res.status(404).json({ success: false, message: "Job not Found" });
 			} else {
 				res.json(job);
-				// User.findByPk(job.userId, {
-				// 	attributes: { exclude: ["password", "createdAt", "updatedAt"] }
-				// })
-				// 	.then(user => {
-				// 		const data = {
-				// 			title: job.title,
-				// 			user: {
-				// 				name: user.name
-				// 			}
-				// 		};
-				// 		res.json(data);
-				// 	})
-				// 	.catch(
-				// 		res.status(500).json({
-				// 			success: false,
-				// 			message: "Something went wrong while getting the user"
-				// 		})
-				// 	);
 			}
 		})
 		.catch(err =>
@@ -105,12 +83,13 @@ exports.postJob = (req, res) => {
 };
 
 /**
- * Deletes a Job
+ * Deletes a Job (Can only be deleted by the user that created the job)
  */
 exports.deleteJob = (req, res) => {
 	const jobId = req.params.id;
 	Job.findByPk(jobId)
 		.then(job => {
+			// Checks to see if the person trying to delete the job is the creator
 			if (job.userId !== req.userId) {
 				res
 					.status(401)
@@ -130,7 +109,7 @@ exports.deleteJob = (req, res) => {
 };
 
 /**
- * Gets all job created by the a user
+ * Gets all job created by a user
  */
 exports.getJobsByUser = (req, res) => {
 	const id = req.params.id;

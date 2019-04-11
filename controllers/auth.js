@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
+/**
+ * Logs in a user
+ */
 exports.postLogin = (req, res, next) => {
 	const { email, password } = req.body;
 	if (!email || !password) {
@@ -19,26 +22,29 @@ exports.postLogin = (req, res, next) => {
 					.compare(password, user.password)
 					.then(match => {
 						if (!match) {
-							return res.status(400).json({ msg: "Invalid Password" });
-						}
-						const exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1hr
-						jwt.sign(
-							{ userId: user.id },
-							process.env.AUTH_SECRET_KEY,
-							{ expiresIn: "1h" },
-							(err, token) => {
-								console.log("Token: ", token);
-
-								res.json({
-									token,
-									user: {
-										id: user.id,
-										name: user.name,
-										email: user.email
+							res.status(400).json({ msg: "Invalid Password" });
+						} else {
+							// Creates a jwt and stores the userId in the encoded token
+							jwt.sign(
+								{ userId: user.id },
+								process.env.AUTH_SECRET_KEY,
+								{ expiresIn: "1h" },
+								(err, token) => {
+									if (!err) {
+										res.json({
+											token,
+											user: {
+												id: user.id,
+												name: user.name,
+												email: user.email
+											}
+										});
+									} else {
+										next(err);
 									}
-								});
-							}
-						);
+								}
+							);
+						}
 					})
 					.catch(err => {
 						next(err);
@@ -48,6 +54,9 @@ exports.postLogin = (req, res, next) => {
 	}
 };
 
+/**
+ * Gets the current logged in user
+ */
 exports.getCurrentUser = (req, res, next) => {
 	const userId = req.userId;
 	User.findByPk(userId, {

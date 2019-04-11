@@ -9,13 +9,11 @@ import {
 	Input,
 	FormText,
 	FormFeedback,
-	CustomInput,
 	Container,
 	Row,
 	Col,
 	Card,
 	CardBody,
-	CardTitle,
 	CardHeader,
 	CardFooter,
 	Alert
@@ -39,6 +37,7 @@ class Auth extends Component {
 		});
 	};
 
+	// Event handler for the file input field
 	onImgChanged = e => {
 		this.setState({
 			image: e.target.files[0]
@@ -66,7 +65,7 @@ class Auth extends Component {
 	};
 
 	render() {
-		const { isLoading, isLogin, isAuth, error } = this.props;
+		const { isLogin, isAuth, error } = this.props;
 		return (
 			<Container>
 				{isAuth && <Redirect to="/" />}

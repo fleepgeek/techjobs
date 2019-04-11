@@ -1,22 +1,25 @@
 import axios from "../../utils/axios-base";
 import * as types from "./actionTypes";
 
-export const authStart = () => ({
+const authStart = () => ({
 	type: types.AUTH_START
 });
 
-export const authSuccess = (token, userId, user) => ({
+const authSuccess = (token, userId, user) => ({
 	type: types.AUTH_SUCCESS,
 	token,
 	userId,
 	user
 });
 
-export const authFailed = error => ({
+const authFailed = error => ({
 	type: types.AUTH_FAILED,
 	error
 });
 
+// Notice: We only export action creators that would be used outside this file
+// eg: in components.
+// auth() is used for both login and regitration
 export const auth = authData => (dispatch, getState) => {
 	dispatch(authStart());
 	const isLogin = getState().auth.isLogin;
@@ -26,14 +29,22 @@ export const auth = authData => (dispatch, getState) => {
 		headers: {}
 	};
 	if (!isLogin) {
+		// We set this header because we want our request to process
+		// files via uploads through a form
 		config.headers["Content-Type"] = "multipart/form-data";
 		endPoint = "user";
+		// FormData() is a js interface that helps you construct key/value
+		// pairs from your form fields.
+		// You use this becuase content-type of application/json can't handle
+		// file fields. Remember JSON is just good old objects with plain text data.
+		// This is useful when uploading files via fetch() or axios();
 		formData = new FormData();
 		formData.append("name", authData.name);
 		formData.append("email", authData.email);
 		formData.append("password", authData.password);
 		formData.append("image", authData.image);
 	} else {
+		// If it is login, we can set our headers back to application/json
 		config.headers["Content-Type"] = "application/json";
 		endPoint = "auth";
 		formData = authData;
@@ -61,10 +72,9 @@ export const logout = () => ({
 // Automatically logs in the user when the user visits the page
 // but only does that if his/her credentials are still valid
 // We call the at the root (App) component.
+// TODO: Add expiration date to token and check if valid to logout
 export const authAutoLogin = () => (dispatch, getState) => {
 	const { token, userId } = getState().auth;
-	// const token = localStorage.getItem("token");
-	// const userId = localStorage.getItem("userId");
 	if (!token) {
 		dispatch(logout());
 	} else {
