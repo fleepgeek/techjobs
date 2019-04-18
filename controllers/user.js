@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator/check");
 
 const User = require("../models/user");
 
@@ -7,6 +8,10 @@ const User = require("../models/user");
  * Creates a new User
  */
 exports.postAddUser = (req, res, next) => {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
 	const { name, email, password } = req.body;
 	let imageUrl = null;
 	// req.file is availble because of multer.
@@ -26,7 +31,9 @@ exports.postAddUser = (req, res, next) => {
 		})
 			.then(user => {
 				if (user) {
-					res.status(400).json({ msg: "User already exists" });
+					const error = new Error("User already exists");
+					error.statusCode = 400;
+					next(err);
 				} else {
 					try {
 						const salt = bcrypt.genSaltSync(10);
@@ -57,11 +64,9 @@ exports.postAddUser = (req, res, next) => {
 								}
 							);
 						})
-						.catch(err =>
-							res.status(500).json({ msg: "An error occured", error: err })
-						);
+						.catch(err => next(err));
 				}
 			})
-			.catch(err => res.status(500).json({ msg: "Something went wrong" }));
+			.catch(err => next(err));
 	}
 };

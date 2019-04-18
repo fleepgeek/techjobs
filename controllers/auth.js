@@ -9,20 +9,29 @@ const User = require("../models/user");
 exports.postLogin = (req, res, next) => {
 	const { email, password } = req.body;
 	if (!email || !password) {
-		res.status(400).json({ msg: "All Field are required" });
+		const error = new Error("All Fields are required");
+		error.statusCode = 400;
+		next(error);
 	} else {
 		User.findOne({
 			where: { email }
 		})
 			.then(user => {
 				if (!user) {
-					return res.status(400).json({ msg: "Invalid Email" });
+					// return res.status(400).json({ msg: "Invalid Email" });
+					const error = new Error("User Not Found");
+					error.statusCode = 404;
+					return next(error);
 				}
 				bcrypt
 					.compare(password, user.password)
 					.then(match => {
 						if (!match) {
-							res.status(400).json({ msg: "Invalid Password" });
+							const error = new Error("Invalid Password");
+							error.statusCode = 400;
+							// throwing this takes it to the catch block
+							// I'll recommend using next(error)
+							throw error;
 						} else {
 							// Creates a jwt and stores the userId in the encoded token
 							jwt.sign(
@@ -50,7 +59,9 @@ exports.postLogin = (req, res, next) => {
 						next(err);
 					});
 			})
-			.catch(err => next(err));
+			.catch(err => {
+				next(err);
+			});
 	}
 };
 
@@ -59,15 +70,17 @@ exports.postLogin = (req, res, next) => {
  */
 exports.getCurrentUser = (req, res, next) => {
 	const userId = req.userId;
-	User.findByPk(userId, {
+	User.findByPk("userId", {
 		attributes: { exclude: ["password", "updatedAt"] }
 	})
 		.then(user => {
-			res.json(user);
+			if (!user) {
+				const error = new Error("User Not Found");
+				error.statusCode = 404;
+				next(error);
+			} else {
+				res.json(user);
+			}
 		})
-		.catch(error =>
-			res
-				.status(500)
-				.json({ msg: "Something went wrong while fetching the user", error })
-		);
+		.catch(error => next(error));
 };

@@ -14,7 +14,9 @@ const authenticate = (req, res, next) => {
 	} else {
 		jwt.verify(token, process.env.AUTH_SECRET_KEY, function(err, decoded) {
 			if (err) {
-				return res.status(401).json({ msg: "Invalid Token", error: err });
+				const error = new Error("Invalid Token");
+				error.statusCode = 401;
+				throw error;
 			} else {
 				// Store the userId in the global request object.
 				// This means that any middleware can get the userId

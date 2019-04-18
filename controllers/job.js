@@ -1,4 +1,5 @@
 // const Sequelize = require("sequelize");
+const { validationResult } = require("express-validator/check");
 const Job = require("../models/job");
 const User = require("../models/user");
 
@@ -17,7 +18,7 @@ exports.getJobs = (req, res, next) => {
 		.then(jobs => {
 			res.json(jobs);
 		})
-		.catch(err => res.json({ success: false }));
+		.catch(err => next(err));
 };
 
 /**
@@ -28,23 +29,24 @@ exports.getJobById = (req, res) => {
 	Job.findByPk(jobId)
 		.then(job => {
 			if (!job) {
-				res.status(404).json({ success: false, message: "Job not Found" });
+				const error = new Error("Job not found");
+				error.statusCode = 404;
+				next(error);
 			} else {
 				res.json(job);
 			}
 		})
-		.catch(err =>
-			res.status(500).json({
-				success: false,
-				message: "Something went wrong while getting the job"
-			})
-		);
+		.catch(err => next(err));
 };
 
 /**
  * Posts a Job
  */
 exports.postJob = (req, res) => {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
 	const { title } = req.body;
 	const userId = req.userId;
 	console.log("Req userId:" + userId);
@@ -65,11 +67,7 @@ exports.postJob = (req, res) => {
 					res.json(job);
 				});
 		})
-		.catch(err =>
-			res
-				.status(500)
-				.json({ msg: "Something went wrong while add job", error: err })
-		);
+		.catch(err => next(err));
 
 	// Old way to create a job
 	// Job.create({
@@ -91,21 +89,19 @@ exports.deleteJob = (req, res) => {
 		.then(job => {
 			// Checks to see if the person trying to delete the job is the creator
 			if (job.userId !== req.userId) {
-				res
-					.status(401)
-					.json({ msg: "You can't delete a job you did not create" });
+				const error = new Error("You can't delete a job you did not create");
+				error.statusCode = 401;
+				next(error);
 			} else {
 				job
 					.destroy()
 					.then(() => {
 						res.json({ success: true });
 					})
-					.catch(err => res.json({ success: false }));
+					.catch(err => next(err));
 			}
 		})
-		.catch(err =>
-			res.json({ success: false, message: "This Job doesnt exists" })
-		);
+		.catch(err => next(err));
 };
 
 /**
@@ -119,19 +115,7 @@ exports.getJobsByUser = (req, res) => {
 			user
 				.getJobs()
 				.then(jobs => res.json(jobs))
-				.catch(err =>
-					res.status(500).json({
-						success: false,
-						msg: "Something went wrong while getting jobs",
-						error: err
-					})
-				);
+				.catch(err => next(err));
 		})
-		.catch(err =>
-			res.status(500).json({
-				success: false,
-				msg: "Something went wrong while getting user",
-				error: err
-			})
-		);
+		.catch(err => next(err));
 };

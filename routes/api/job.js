@@ -6,6 +6,7 @@
 */
 
 const express = require("express");
+const { body } = require("express-validator/check");
 const jobController = require("../../controllers/job");
 const authenticate = require("../../middlewares/auth");
 
@@ -13,7 +14,17 @@ const router = express.Router();
 
 router.get("/:id", jobController.getJobById);
 router.get("/", jobController.getJobs);
-router.post("/", authenticate, jobController.postJob);
+router.post(
+	"/",
+	[
+		body("title")
+			.trim()
+			.isLength({ min: 4 })
+			.withMessage("Job Title must be more that 4 characters long")
+	],
+	authenticate,
+	jobController.postJob
+);
 router.delete("/:id", authenticate, jobController.deleteJob);
 router.get("/user/:id", jobController.getJobsByUser);
 

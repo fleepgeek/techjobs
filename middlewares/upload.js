@@ -26,6 +26,7 @@ function fileFilter(req, file, cb) {
 }
 
 // Creates a new multer instance
-const upload = multer({ storage, fileFilter });
+// limits for fileSize is in bytes so this is 500kb
+const upload = multer({ storage, fileFilter, limits: { fileSize: 500000 } });
 
 module.exports = upload;

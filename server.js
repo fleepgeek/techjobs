@@ -30,6 +30,20 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/user", require("./routes/api/user"));
 app.use("/api/auth", require("./routes/api/auth"));
 
+// 404 Middleware
+app.use((req, res, next) => {
+	res.status(404).json({ message: "Invalid Endpoint" });
+});
+
+// Error Handling Middleware
+// You app reaches this because of the first arg: "err"
+app.use((err, req, res, next) => {
+	console.log(err);
+	const status = err.statusCode || 500;
+	const message = err.message;
+	res.status(status).json({ message });
+});
+
 // Gets the PORT from the Node env and if it
 // does not exists there, set it to 5000
 const PORT = process.env.PORT || 5000;
